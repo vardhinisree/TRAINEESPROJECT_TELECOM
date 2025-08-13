@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data // Auto-generates getters, setters, toString, equals, hashCode
 @NoArgsConstructor
 @Builder
-public class User {
+public class Users {
 	@Id
 	private Long id;
 	private String name;
@@ -30,7 +30,7 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 	
-	public User() {}
+	public Users() {}
 
 	public Long getId() {
 		return id;
