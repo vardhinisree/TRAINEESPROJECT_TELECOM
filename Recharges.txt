@@ -1,0 +1,280 @@
+package com.telecom.Wezen.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Recharge {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // The user who performed the recharge
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user;
+
+    // The plan against which recharge was made (optional, if recharge tied to a plan)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
+
+    // Recharge amount
+    @Column(nullable = false)
+    private BigDecimal amount;
+
+    // Date & time of recharge
+    @Column(nullable = false)
+    private LocalDateTime rechargeDate;
+
+@Enumerated(EnumType.STRING)
+private PaymentStatus paymentStatus;
+
+@Enumerated(EnumType.STRING)
+private PaymentMode paymentMode;
+
+@Enumerated(EnumType.STRING)
+private RechargeType rechargeType; // Optional
+
+
+   }
+
+
+
+
+
+package com.telecom.Wezen.repository;
+
+import com.telecom.Wezen.entity.Recharge;
+import com.telecom.Wezen.entity.Users;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface RechargeRepository extends JpaRepository<Recharge, Long> {
+
+    // Find all recharges by a specific user
+    List<Recharge> findByUser(Users user);
+
+    // Optional: Find all recharges by payment status
+    List<Recharge> findByPaymentStatus(String paymentStatus);
+
+    
+}
+
+
+package com.telecom.Wezen.enums;
+
+public enum PaymentStatus {
+    SUCCESS,
+    PENDING,
+    FAILED,
+    CANCELLED,
+    REFUNDED
+}
+
+package com.telecom.Wezen.enums;
+
+public enum PaymentMode {
+    CREDIT_CARD,
+    DEBIT_CARD,
+    NET_BANKING,
+    UPI,
+    WALLET,
+    CASH
+}
+
+package com.telecom.Wezen.enums;
+
+public enum RechargeType {
+    DATA,
+    VOICE,
+    COMBO
+}
+
+
+package com.telecom.Wezen.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.telecom.Wezen.entity.Recharge;
+import com.telecom.Wezen.entity.Users;
+import com.telecom.Wezen.repository.RechargeRepository;
+
+@Service
+public class RechargeService {
+
+    private final RechargeRepository rechargeRepository;
+
+    public RechargeService(RechargeRepository rechargeRepository) {
+        this.rechargeRepository = rechargeRepository;
+    }
+
+    public List<Recharge> getAllRecharges() {
+        return rechargeRepository.findAll();
+    }
+
+    public Optional<Recharge> getRechargeById(Long id) {
+        return rechargeRepository.findById(id);
+    }
+
+    public Recharge saveRecharge(Recharge recharge) {
+        return rechargeRepository.save(recharge);
+    }
+
+    public void deleteRecharge(Long id) {
+        rechargeRepository.deleteById(id);
+    }
+
+    // Get all recharges by a user
+    public List<Recharge> getRechargesByUser(Users user) {
+        return rechargeRepository.findByUser(user);
+    }
+
+
+}
+
+
+
+package com.telecom.Wezen.controller;
+
+import com.telecom.Wezen.entity.Recharge;
+import com.telecom.Wezen.entity.Users;
+import com.telecom.Wezen.service.RechargeService;
+import com.telecom.Wezen.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/recharges")
+public class RechargeController {
+
+    private final RechargeService rechargeService;
+    private final UserService userService; // to fetch Users when needed
+
+    public RechargeController(RechargeService rechargeService, UserService userService) {
+        this.rechargeService = rechargeService;
+        this.userService = userService;
+    }
+
+    // Get all recharges
+    @GetMapping
+    public List<Recharge> getAllRecharges() {
+        return rechargeService.getAllRecharges();
+    }
+
+    // Get recharge by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Recharge> getRechargeById(@PathVariable Long id) {
+        return rechargeService.getRechargeById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Get all recharges by a specific user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Recharge>> getRechargesByUser(@PathVariable Long userId) {
+        Users user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Recharge> recharges = rechargeService.getRechargesByUser(user);
+        return ResponseEntity.ok(recharges);
+    }
+
+    // Create new recharge
+    @PostMapping
+    public ResponseEntity<Recharge> createRecharge(@RequestBody Recharge recharge) {
+        Recharge savedRecharge = rechargeService.saveRecharge(recharge);
+        return ResponseEntity.ok(savedRecharge);
+    }
+
+    // Update existing recharge
+    @PutMapping("/{id}")
+    public ResponseEntity<Recharge> updateRecharge(@PathVariable Long id, @RequestBody Recharge updatedRecharge) {
+        return rechargeService.getRechargeById(id)
+                .map(existingRecharge -> {
+                    updatedRecharge.setId(id);
+                    Recharge saved = rechargeService.saveRecharge(updatedRecharge);
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Delete recharge
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRecharge(@PathVariable Long id) {
+        rechargeService.deleteRecharge(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
+
+{
+  "user": {
+    "id": 1
+  },
+  "plan": {
+    "id": 101
+  },
+  "amount": 499.99,
+  "rechargeDate": "2025-08-17T22:00:00",
+  "paymentStatus": "SUCCESS",
+  "paymentMode": "CREDIT_CARD",
+  "transactionId": "TXN123456789"
+}
+{
+  "user": {
+    "id": 2
+  },
+  "plan": {
+    "id": 102
+  },
+  "amount": 299.00,
+  "rechargeDate": "2025-08-16T18:30:00",
+  "paymentStatus": "PENDING",
+  "paymentMode": "UPI",
+  "transactionId": "TXN987654321"
+}
+{
+  "user": {
+    "id": 3
+  },
+  "plan": {
+    "id": 103
+  },
+  "amount": 199.50,
+  "rechargeDate": "2025-08-15T12:15:00",
+  "paymentStatus": "FAILED",
+  "paymentMode": "WALLET",
+  "transactionId": "TXN192837465"
+}
+{
+  "user": {
+    "id": 4
+  },
+  "plan": {
+    "id": 104
+  },
+  "amount": 150.00,
+  "rechargeDate": "2025-08-18T10:00:00",
+  "paymentStatus": "SUCCESS",
+  "paymentMode": "CASH"
+}
+
+
+
