@@ -28,7 +28,6 @@ public class Plan {
 	private Long plan_id;
 	private String plan_type;
 	private Integer validityDays;
-	private String password;
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "plan_data_packs", joinColumns = @JoinColumn(name = "plan_id"))
     @MapKeyColumn(name = "price")
@@ -65,13 +64,9 @@ public class Plan {
 		this.validityDays = validityDays;
 	}
 
-	public String getPassword() {
-		return password;
-	}
+	
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	
 
 	public Map<BigDecimal, Long> getDataPacks() {
 		return dataPacks;
@@ -100,7 +95,7 @@ public class Plan {
 	@Override
 	public String toString() {
 		return "Plan [plan_id=" + plan_id + ", plan_type=" + plan_type + ", validityDays=" + validityDays
-				+ ", password=" + password + ", dataPacks=" + dataPacks + ", createdAt=" + createdAt + ", updatedAt="
+				+ ", dataPacks=" + dataPacks + ", createdAt=" + createdAt + ", updatedAt="
 				+ updatedAt + "]";
 	}
     
