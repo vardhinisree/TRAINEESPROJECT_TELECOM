@@ -1,4 +1,4 @@
-package com.telecom.Wezen.Enum.copy;
+package com.telecom.Wezen.enums;
 
 public enum Role {
 	customer,

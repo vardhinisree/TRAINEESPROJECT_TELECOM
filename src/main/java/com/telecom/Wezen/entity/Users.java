@@ -1,6 +1,6 @@
 package com.telecom.Wezen.entity;
 
-import com.telecom.Wezen.Enum.copy.Role;
+import com.telecom.Wezen.enums.Role;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

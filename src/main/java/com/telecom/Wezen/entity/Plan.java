@@ -65,9 +65,6 @@ public class Plan {
 	}
 
 	
-
-	
-
 	public Map<BigDecimal, Long> getDataPacks() {
 		return dataPacks;
 	}
@@ -95,7 +92,7 @@ public class Plan {
 	@Override
 	public String toString() {
 		return "Plan [plan_id=" + plan_id + ", plan_type=" + plan_type + ", validityDays=" + validityDays
-				+ ", dataPacks=" + dataPacks + ", createdAt=" + createdAt + ", updatedAt="
+				+ " dataPacks=" + dataPacks + ", createdAt=" + createdAt + ", updatedAt="
 				+ updatedAt + "]";
 	}
     
