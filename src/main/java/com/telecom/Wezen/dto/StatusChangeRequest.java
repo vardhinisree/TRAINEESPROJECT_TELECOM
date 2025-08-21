@@ -9,4 +9,17 @@ import lombok.Data;
 public class StatusChangeRequest {
 	 @NotNull private TicketStatus status;
 
+	 public TicketStatus getStatus() {
+		 return status;
+	 }
+
+	 public void setStatus(TicketStatus status) {
+		 this.status = status;
+	 }
+
+	 @Override
+	 public String toString() {
+		return "StatusChangeRequest [status=" + status + "]";
+	 }
+
 }

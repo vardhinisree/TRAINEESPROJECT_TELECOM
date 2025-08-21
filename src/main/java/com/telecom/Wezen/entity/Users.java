@@ -1,5 +1,6 @@
 package com.telecom.Wezen.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.telecom.Wezen.enums.Role;
 
 import jakarta.persistence.Entity;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Data // Auto-generates getters, setters, toString, equals, hashCode
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Users {
 	@Id
 	private Long id;

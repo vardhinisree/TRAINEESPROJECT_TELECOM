@@ -1,51 +1,106 @@
 package com.telecom.Wezen.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.telecom.Wezen.dto.TicketCreateRequest;
+import com.telecom.Wezen.dto.TicketRespone;
 import com.telecom.Wezen.entity.ComplaintTicket;
+import com.telecom.Wezen.entity.Users;
+import com.telecom.Wezen.enums.TicketStatus;
 import com.telecom.Wezen.repositories.ComplaintTicketRepository;
-
-import lombok.RequiredArgsConstructor;
+import com.telecom.Wezen.repositories.UserRepository;
 
 @Service
-@RequiredArgsConstructor
 public class ComplaintTicketService {
 
-    private final ComplaintTicketRepository complaintTicketRepository;
+    @Autowired
+    private ComplaintTicketRepository complaintTicketRepository;
 
-    public ComplaintTicket createComplaint(ComplaintTicket complaint) {
-        return complaintTicketRepository.save(complaint);
+    @Autowired
+    private UserRepository userRepository;
+
+    // ✅ Create complaint
+    public TicketRespone createComplaint(TicketCreateRequest request) {
+        Users user = userRepository.findById(request.getUserId()).orElse(null);
+
+        ComplaintTicket complaint = new ComplaintTicket();
+        complaint.setUser(user);
+        complaint.setCategory(request.getCategory());
+        complaint.setSubject(request.getSubject());
+        complaint.setDescription(request.getDescription());
+        complaint.setPriority(request.getPriority());
+        complaint.setStatus(TicketStatus.OPEN);
+        complaint.setSlaMinutes(120);
+        complaint.setDueAt(Instant.now().plusSeconds(120 * 60));
+        complaint.setEscalated(false);
+        complaint.setAssignee("support-team@telecom.com");
+        complaint.setCreatedAt(Instant.now());
+        complaint.setUpdatedAt(Instant.now());
+
+        ComplaintTicket saved = complaintTicketRepository.save(complaint);
+        return mapToResponse(saved);
     }
 
-    public List<ComplaintTicket> getAllComplaints() {
-        return complaintTicketRepository.findAll();
+    // ✅ Get all complaints
+    public List<TicketRespone> getAllComplaints() {
+        return complaintTicketRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    public ComplaintTicket getComplaintById(UUID id) {
+    // ✅ Get complaint by ID
+    public TicketRespone getComplaintById(UUID id) {
         return complaintTicketRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Complaint not found with id " + id));
+                .map(this::mapToResponse)
+                .orElse(null);
     }
 
-    public ComplaintTicket updateComplaint(UUID id, ComplaintTicket updatedComplaint) {
-        ComplaintTicket existing = getComplaintById(id);
+    // ✅ Update complaint
+    public TicketRespone updateComplaint(UUID id, TicketCreateRequest request) {
+        ComplaintTicket existing = complaintTicketRepository.findById(id).orElse(null);
+        if (existing == null) return null;
 
-        existing.setCategory(updatedComplaint.getCategory());
-        existing.setSubject(updatedComplaint.getSubject());
-        existing.setDescription(updatedComplaint.getDescription());
-        existing.setStatus(updatedComplaint.getStatus());
-        existing.setPriority(updatedComplaint.getPriority());
-        existing.setSlaMinutes(updatedComplaint.getSlaMinutes());
-        existing.setDueAt(updatedComplaint.getDueAt());
-        existing.setEscalated(updatedComplaint.isEscalated());
-        existing.setAssignee(updatedComplaint.getAssignee());
+        Users user = userRepository.findById(request.getUserId()).orElse(null);
 
-        return complaintTicketRepository.save(existing);
+        existing.setUser(user);
+        existing.setCategory(request.getCategory());
+        existing.setSubject(request.getSubject());
+        existing.setDescription(request.getDescription());
+        existing.setPriority(request.getPriority());
+        existing.setUpdatedAt(Instant.now());
+
+        ComplaintTicket updated = complaintTicketRepository.save(existing);
+        return mapToResponse(updated);
     }
 
+    // ✅ Delete complaint
     public void deleteComplaint(UUID id) {
         complaintTicketRepository.deleteById(id);
+    }
+
+    // ✅ Helper mapper
+    private TicketRespone mapToResponse(ComplaintTicket ticket) {
+        TicketRespone response = new TicketRespone();
+        response.setId(ticket.getId());
+        response.setUserId(ticket.getUser() != null ? ticket.getUser().getId() : null);
+        response.setCategory(ticket.getCategory());
+        response.setSubject(ticket.getSubject());
+        response.setDescription(ticket.getDescription());
+        response.setPriority(ticket.getPriority());
+        response.setStatus(ticket.getStatus());
+        response.setSlaMinutes(ticket.getSlaMinutes());
+        response.setDueAt(ticket.getDueAt());
+        response.setEscalated(ticket.isEscalated());
+        response.setAssignee(ticket.getAssignee());
+        response.setCreatedAt(ticket.getCreatedAt());
+        response.setUpdatedAt(ticket.getUpdatedAt());
+        return response;
     }
 }

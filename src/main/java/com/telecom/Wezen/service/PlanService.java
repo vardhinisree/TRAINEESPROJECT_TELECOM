@@ -1,13 +1,17 @@
 package com.telecom.Wezen.service;
 
-import com.telecom.Wezen.entity.Plan;
-import com.telecom.Wezen.repositories.PlanRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+import com.telecom.Wezen.entity.Plan;
+import com.telecom.Wezen.repositories.PlanRepository;
+
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class PlanService {
 
     private final PlanRepository planRepository;

@@ -2,78 +2,86 @@ package com.telecom.Wezen.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.telecom.Wezen.dto.RechargeRequest;
 import com.telecom.Wezen.entity.Recharge;
-import com.telecom.Wezen.entity.Users;
 import com.telecom.Wezen.service.RechargeService;
-import com.telecom.Wezen.service.UserService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 
+@RestController
+@RequestMapping("/api/recharges")
 public class RechargeController {
-	  private final RechargeService rechargeService;
-	    private final UserService userService; // to fetch Users when needed
 
-	    public RechargeController(RechargeService rechargeService, UserService userService) {
-	        this.rechargeService = rechargeService;
-	        this.userService = userService;
-	    }
+    @Autowired
+    private RechargeService rechargeService;
 
-	    // Get all recharges
-	    @GetMapping
-	    public List<Recharge> getAllRecharges() {
-	        return rechargeService.getAllRecharges();
-	    }
+    // ✅ Create Recharge (POST)
+    @PostMapping
+    public ResponseEntity<?> createRecharge(@Valid @RequestBody RechargeRequest rechargeDTO) {
+        try {
+            Recharge recharge = rechargeService.createRecharge(rechargeDTO);
+            return ResponseEntity.ok(recharge);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error creating recharge: " + e.getMessage());
+        }
+    }
 
-	    // Get recharge by ID
-	    @GetMapping("/{id}")
-	    public ResponseEntity<Recharge> getRechargeById(@PathVariable Long id) {
-	        return rechargeService.getRechargeById(id)
-	                .map(ResponseEntity::ok)
-	                .orElse(ResponseEntity.notFound().build());
-	    }
+    // ✅ Get All Recharges (GET)
+    @GetMapping
+    public ResponseEntity<List<Recharge>> getAllRecharges() {
+        return ResponseEntity.ok(rechargeService.getAllRecharges());
+    }
 
-	    // Get all recharges by a specific user
-	    @GetMapping("/user/{userId}")
-	    public ResponseEntity<List<Recharge>> getRechargesByUser(@PathVariable Long userId) {
-	        Users user = userService.getUserById(userId);
-	        if (user == null) {
-	            return ResponseEntity.notFound().build();
-	        }
-	        List<Recharge> recharges = rechargeService.getRechargesByUser(user);
-	        return ResponseEntity.ok(recharges);
-	    }
+    // ✅ Get Recharge By Id (GET)
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRechargeById(@PathVariable Long id) {
+        try {
+            return rechargeService.getRechargeById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching recharge: " + e.getMessage());
+        }
+    }
 
-	    // Create new recharge
-	    @PostMapping
-	    public ResponseEntity<Recharge> createRecharge(@RequestBody Recharge recharge) {
-	        Recharge savedRecharge = rechargeService.saveRecharge(recharge);
-	        return ResponseEntity.ok(savedRecharge);
-	    }
+    // ✅ Update Recharge (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateRecharge(
+            @PathVariable Long id,
+            @Valid @RequestBody RechargeRequest rechargeDTO) {
+        try {
+            Recharge updatedRecharge = rechargeService.updateRecharge(id, rechargeDTO);
+            return ResponseEntity.ok(updatedRecharge);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error updating recharge: " + e.getMessage());
+        }
+    }
 
-	    // Update existing recharge
-	    @PutMapping("/{id}")
-	    public ResponseEntity<Recharge> updateRecharge(@PathVariable Long id, @RequestBody Recharge updatedRecharge) {
-	        return rechargeService.getRechargeById(id)
-	                .map(existingRecharge -> {
-	                    updatedRecharge.setId(id);
-	                    Recharge saved = rechargeService.saveRecharge(updatedRecharge);
-	                    return ResponseEntity.ok(saved);
-	                })
-	                .orElse(ResponseEntity.notFound().build());
-	    }
-
-	    // Delete recharge
-	    @DeleteMapping("/{id}")
-	    public ResponseEntity<Void> deleteRecharge(@PathVariable Long id) {
-	        rechargeService.deleteRecharge(id);
-	        return ResponseEntity.noContent().build();
-	    }
-	}
-
+    // ✅ Delete Recharge (DELETE)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRecharge(@PathVariable Long id) {
+        try {
+            rechargeService.deleteRecharge(id);
+            return ResponseEntity.ok("Recharge deleted successfully!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error deleting recharge: " + e.getMessage());
+        }
+    }
+}
