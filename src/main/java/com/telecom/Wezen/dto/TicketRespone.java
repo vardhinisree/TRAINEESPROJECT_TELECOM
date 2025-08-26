@@ -9,7 +9,7 @@ import com.telecom.Wezen.enums.TicketStatus;
 import lombok.Builder;
 import lombok.Data;
 
-@Data @Builder
+@Data 
 public class TicketRespone {
 	private UUID id;
 	  private Long userId;
@@ -24,6 +24,7 @@ public class TicketRespone {
 	  private String assignee;
 	  private Instant createdAt;
 	  private Instant updatedAt;
+	  
 	  public UUID getId() {
 		  return id;
 	  }
@@ -108,6 +109,9 @@ public class TicketRespone {
 				+ ", description=" + description + ", status=" + status + ", priority=" + priority + ", slaMinutes="
 				+ slaMinutes + ", dueAt=" + dueAt + ", escalated=" + escalated + ", assignee=" + assignee
 				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+	  }
+	  public TicketRespone() {
+		
 	  }
 
 }

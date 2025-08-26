@@ -23,8 +23,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data // Auto-generates getters, setters, toString, equals, hashCode
-@NoArgsConstructor
-@Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Plan {
 	@Id

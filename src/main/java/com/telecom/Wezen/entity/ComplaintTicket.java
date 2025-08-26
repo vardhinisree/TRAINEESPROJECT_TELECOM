@@ -29,7 +29,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
+
 public class ComplaintTicket {
 	@Id
 	@GeneratedValue

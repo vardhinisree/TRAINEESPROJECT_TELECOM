@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.telecom.Wezen.dto.TicketCreateRequest;
@@ -21,6 +24,8 @@ public class ComplaintTicketService {
 
     @Autowired
     private ComplaintTicketRepository complaintTicketRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ComplaintTicketService.class);
+    
 
     @Autowired
     private UserRepository userRepository;
@@ -36,8 +41,8 @@ public class ComplaintTicketService {
         complaint.setDescription(request.getDescription());
         complaint.setPriority(request.getPriority());
         complaint.setStatus(TicketStatus.OPEN);
-        complaint.setSlaMinutes(120);
-        complaint.setDueAt(Instant.now().plusSeconds(120 * 60));
+        complaint.setSlaMinutes(1);
+        complaint.setDueAt(Instant.now().plusSeconds(1 * 60));
         complaint.setEscalated(false);
         complaint.setAssignee("support-team@telecom.com");
         complaint.setCreatedAt(Instant.now());
@@ -103,4 +108,24 @@ public class ComplaintTicketService {
         response.setUpdatedAt(ticket.getUpdatedAt());
         return response;
     }
+    @Scheduled(fixedRate = 300000)  // runs every 5 minutes (300,000 ms)
+    public void checkSlaBreaches() {
+        Instant now = Instant.now();
+        
+        List<ComplaintTicket> overdueTickets = complaintTicketRepository
+       .findByStatusAndDueAtBefore(TicketStatus.OPEN, now);
+
+        for (ComplaintTicket ticket : overdueTickets) {
+            if (!ticket.isEscalated()) {
+                ticket.setEscalated(true);
+                ticket.setAssignee("senior-support@telecom.com"); // example escalation
+                complaintTicketRepository.save(ticket);
+
+                logger.info("Escalated ticket ID {} as SLA breached at {}", 
+                            ticket.getId(), now);
+            }
+        }
+    }
+
+    
 }
