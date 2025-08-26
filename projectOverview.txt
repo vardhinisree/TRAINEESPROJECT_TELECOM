@@ -1,0 +1,107 @@
+"Telecom Customer Veritel  Portal"
+
+Project Overview:
+
+Develop a full-stack web application where telecom customers can manage their accounts, plans(Data,VoiceCombo), complaints, and payments. 
+The system will also have an admin panel for telecom employees to manage customer records, plans, and analytics.
+
+ Target Users:
+Customer (User)
+Admin (Telecom Employee/Support Staff)
+
+ Core Modules & Features:
+ Authentication & Authorization
+Register/Login (JWT-based)
+Role-based access (User, Admin)
+Password reset
+
+ Customer Module
+View/Update Profile
+Browse available plans (Data, Voice, Combo)
+Recharge / Make Payments
+View Usage (data/minutes)
+Raise Service Requests or Complaints
+View Complaint Status
+
+ Admin Module
+Manage Users (CRUD)
+Manage Plans (CRUD)
+View Complaints
+Resolve Complaints / Change Status
+
+Analytics Dashboard:
+
+Daily recharges
+Active users
+Top complaints/issues
+Revenue report
+
+ Technology Stack
+☕ Backend (Java):
+Spring Boot (REST API)
+Spring Security (JWT authentication)
+JPA + Hibernate
+MySQL / PostgreSQL (DB)
+
+🌐 Frontend:
+ React 
+HTML, CSS, Bootstrap / Tailwind
+Chart.js or Recharts (for dashboard graphs)
+
+⚙️ Tools & DevOps:
+Maven
+Postman (API Testing)
+Swagger (API Documentation)
+Git + GitHub (Version Control)
+Docker (optional) for containerization
+Jenkins (optional) for CI/CD pipeline
+
+🧪 Testing:
+JUnit for unit testing
+Mockito for mocking
+Postman API testing
+
+📂 Project Structure
+Backend (Spring Boot)
+
+com.telecom.portal
+│
+├── controller
+├── service
+├── repository
+├── dto
+├── model
+└── config
+Frontend (React)
+css
+Copy
+Edit
+src/
+├── components/
+├── services/
+├── pages/
+└── auth/
+
+📑 Requirements
+Functional Requirements:
+User should register and login securely.
+Users can view, search, and recharge telecom plans.
+Complaint module to log and track service issues.
+Admin can manage customers, plans, and handle complaints.
+Dashboard with KPIs and visual insights.
+
+
+Non-Functional Requirements:
+Secure (JWT, role-based access)
+Responsive UI
+RESTful API design
+Modular and maintainable code
+Exception handling
+Logging 
+
+
+🧩 Optional Enhancements
+OTP-based login
+Payment gateway simulation
+PDF invoice generation
+Chatbot for help section

@@ -1,0 +1,152 @@
+package com.telecom.Wezen.service;
+
+import com.telecom.Wezen.entity.Recharge;
+import com.telecom.Wezen.entity.Usage_Details;
+import com.telecom.Wezen.entity.Users;
+import com.telecom.Wezen.repositories.RechargeRepository;
+import com.telecom.Wezen.repositories.UsageDetailsRepository;
+import com.telecom.Wezen.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UsageDetailsService {
+
+    @Autowired
+    private UsageDetailsRepository usageDetailsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RechargeRepository rechargeRepository;
+
+    // ✅ Create usage
+    public Usage_Details createUsage(Long userId, Long rechargeId, Integer callsUsed, Integer smsUsed, Double dataUsed) {
+        Users user = userRepository.findById(userId).orElse(null);
+        Recharge recharge = rechargeRepository.findById(rechargeId).orElse(null);
+
+        if (user == null || recharge == null) {
+            return null; // No exception, return null if not found
+        }
+
+        Usage_Details usage = new Usage_Details();
+        usage.setUser(user);
+        usage.setRecharge(recharge);
+        usage.setCallsUsed(callsUsed != null ? callsUsed : 0);
+        usage.setSmsUsed(smsUsed != null ? smsUsed : 0);
+        usage.setDataUsed(dataUsed != null ? dataUsed : 0.0);
+        usage.setUsageDate(LocalDateTime.now());
+
+        return usageDetailsRepository.save(usage);
+    }
+
+    // ✅ Read all
+    public List<Usage_Details> getAllUsageDetails() {
+        return usageDetailsRepository.findAll();
+    }
+
+    // ✅ Read by ID
+    public Usage_Details getUsageDetailsById(Long id) {
+        return usageDetailsRepository.findById(id).orElse(null);
+    }
+
+    // ✅ Update usage
+    public Usage_Details updateUsage(Long id, Integer callsUsed, Integer smsUsed, Double dataUsed) {
+        Usage_Details existing = usageDetailsRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+
+        if (callsUsed != null) existing.setCallsUsed(callsUsed);
+        if (smsUsed != null) existing.setSmsUsed(smsUsed);
+        if (dataUsed != null) existing.setDataUsed(dataUsed);
+
+        existing.setUsageDate(LocalDateTime.now());
+
+        return usageDetailsRepository.save(existing);
+    }
+
+    // ✅ Delete usage
+    public boolean deleteUsage(Long id) {
+        if (usageDetailsRepository.existsById(id)) {
+            usageDetailsRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+}
+
+
+
+package com.telecom.Wezen.controller;
+
+import com.telecom.Wezen.entity.Usage_Details;
+import com.telecom.Wezen.service.UsageDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/usage")
+public class UsageDetailsController {
+
+    @Autowired
+    private UsageDetailsService usageDetailsService;
+
+    // ✅ Create usage
+    @PostMapping("/create")
+    public Usage_Details createUsage(
+            @RequestParam Long userId,
+            @RequestParam Long rechargeId,
+            @RequestParam(required = false) Integer callsUsed,
+            @RequestParam(required = false) Integer smsUsed,
+            @RequestParam(required = false) Double dataUsed
+    ) {
+        return usageDetailsService.createUsage(userId, rechargeId, callsUsed, smsUsed, dataUsed);
+    }
+
+    // ✅ Get all usage records
+    @GetMapping("/all")
+    public List<Usage_Details> getAllUsage() {
+        return usageDetailsService.getAllUsageDetails();
+    }
+
+    // ✅ Get usage by ID
+    @GetMapping("/{id}")
+    public Usage_Details getUsageById(@PathVariable Long id) {
+        return usageDetailsService.getUsageDetailsById(id);
+    }
+
+    // ✅ Update usage
+    @PutMapping("/update/{id}")
+    public Usage_Details updateUsage(
+            @PathVariable Long id,
+            @RequestParam(required = false) Integer callsUsed,
+            @RequestParam(required = false) Integer smsUsed,
+            @RequestParam(required = false) Double dataUsed
+    ) {
+        return usageDetailsService.updateUsage(id, callsUsed, smsUsed, dataUsed);
+    }
+
+    // ✅ Delete usage
+    @DeleteMapping("/delete/{id}")
+    public boolean deleteUsage(@PathVariable Long id) {
+        return usageDetailsService.deleteUsage(id);
+    }
+}
+
+
+{
+  "userId": 1,
+  "rechargeId": 2,
+  "callsUsed": 50,
+  "smsUsed": 20,
+  "dataUsed": 300.5
+}
+

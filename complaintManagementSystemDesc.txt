@@ -1,0 +1,12 @@
+4. Telecom Complaint Management System
+• Abstract:
+• A customer grievance portal where users raise complaints (e.g., network
+issues, billing errors), track status, and receive resolutions from backend
+teams.
+• Key Features:
+• Complaint ticket creation and tracking
+• SLA management with escalation logic
+• Workflow engine in Spring Boot
+• React frontend with chat-bot style UI for support
+• PostgreSQL for storing tickets and user responses
+• Git + Jenkins for pipeline deployment
