@@ -94,7 +94,7 @@ public class ComplaintTicketService {
     private TicketRespone mapToResponse(ComplaintTicket ticket) {
         TicketRespone response = new TicketRespone();
         response.setId(ticket.getId());
-        response.setUserId(ticket.getUser() != null ? ticket.getUser().getId() : null);
+        response.setId(ticket.getUser() != null ? ticket.getUser().getId() : null);
         response.setCategory(ticket.getCategory());
         response.setSubject(ticket.getSubject());
         response.setDescription(ticket.getDescription());

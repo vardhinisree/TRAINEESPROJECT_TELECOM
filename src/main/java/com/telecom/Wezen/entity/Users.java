@@ -1,5 +1,11 @@
 package com.telecom.Wezen.entity;
 
+import java.util.Collection;
+import java.util.UUID;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.telecom.Wezen.enums.Role;
 
@@ -18,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Data // Auto-generates getters, setters, toString, equals, hashCode
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Users {
+public class Users implements UserDetails {
 	@Id
 	private Long id;
 	private String name;
@@ -93,6 +99,18 @@ public class Users {
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", mail=" + mail + ", password=" + password + ", plan=" + plan
 				+ ", phoneNo=" + phoneNo + ", role=" + role + "]";
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 		

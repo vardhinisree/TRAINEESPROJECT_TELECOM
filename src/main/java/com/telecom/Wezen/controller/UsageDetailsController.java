@@ -1,5 +1,6 @@
 package com.telecom.Wezen.controller;
 
+import com.telecom.Wezen.dto.UsageCreateRequest;
 import com.telecom.Wezen.entity.Usage_Details;
 import com.telecom.Wezen.service.UsageDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,15 @@ public class UsageDetailsController {
     @Autowired
     private UsageDetailsService usageDetailsService;
 
-    // ✅ Create usage (use @RequestBody for JSON payload instead of @RequestParam)
+    // ✅ Create usage (use @RequestBody for JSONinstead of @RequestParam)
     @PostMapping("/create")
-    public Usage_Details createUsage(@RequestBody Usage_Details usageDetails) {
+    public Usage_Details createUsage(@RequestBody UsageCreateRequest request) {
         return usageDetailsService.createUsage(
-                usageDetails.getUser().getId(),
-                usageDetails.getRecharge().getId(),
-                usageDetails.getCallsUsed(),
-                usageDetails.getSmsUsed(),
-                usageDetails.getDataUsed()
+                request.getUserId(),
+                request.getRechargeId(),
+                request.getCallsUsed(),
+                request.getSmsUsed(),
+                request.getDataUsed()
         );
     }
 

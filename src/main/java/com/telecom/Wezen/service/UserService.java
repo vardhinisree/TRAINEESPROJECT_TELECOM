@@ -1,6 +1,7 @@
 package com.telecom.Wezen.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Users getUserById(Long id) {
+    public Users getUserById(Long  id) {
         return userRepository.findById(id).orElse(null);
     }
 
@@ -31,4 +32,6 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+	
 }

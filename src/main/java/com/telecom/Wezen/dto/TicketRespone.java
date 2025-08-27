@@ -113,5 +113,9 @@ public class TicketRespone {
 	  public TicketRespone() {
 		
 	  }
+	  public void setId(Long long1) {
+		// TODO Auto-generated method stub
+		
+	  }
 
 }

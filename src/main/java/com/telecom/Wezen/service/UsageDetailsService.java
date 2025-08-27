@@ -2,6 +2,7 @@ package com.telecom.Wezen.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,8 @@ public class UsageDetailsService {
     private RechargeRepository rechargeRepository;
 
     // ✅ Create usage
-    public Usage_Details createUsage(Long userId, Long rechargeId, Integer callsUsed, Integer smsUsed, Double dataUsed) {
-        Users user = userRepository.findById(userId).orElse(null);
+    public Usage_Details createUsage(Long uuid, Long rechargeId, Integer callsUsed, Integer smsUsed, Double dataUsed) {
+        Users user = userRepository.findById(uuid).orElse(null);
         Recharge recharge = rechargeRepository.findById(rechargeId).orElse(null);
 
         if (user == null || recharge == null) {
