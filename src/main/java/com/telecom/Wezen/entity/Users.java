@@ -1,11 +1,11 @@
 package com.telecom.Wezen.entity;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.telecom.Wezen.enums.Role;
 
@@ -16,20 +16,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Data // Auto-generates getters, setters, toString, equals, hashCode
-
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Users implements UserDetails {
 	@Id
 	private Long id;
 	private String name;
 	private String mail;
-	private String password;
+    @JsonIgnore // Prevent password from being serialized
+    private String password;
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
     private Plan plan;

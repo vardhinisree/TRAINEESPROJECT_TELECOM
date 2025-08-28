@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.telecom.Wezen.enums.Priority;
 import com.telecom.Wezen.enums.TicketStatus;
 
@@ -19,7 +21,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,6 +38,7 @@ public class ComplaintTicket {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id")
+	@JsonBackReference
 	private Users user;
 	// complaint details :
 	private String category;
@@ -171,7 +173,7 @@ public class ComplaintTicket {
 
 	  @Override
 	  public String toString() {
-		return "ComplaintTicket [id=" + id + ", user=" + user + ", category=" + category + ", subject=" + subject
+		return "ComplaintTicket [id=" + id + ",  category=" + category + ", subject=" + subject
 				+ ", description=" + description + ", status=" + status + ", priority=" + priority + ", slaMinutes="
 				+ slaMinutes + ", dueAt=" + dueAt + ", escalated=" + escalated + ", assignee=" + assignee
 				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";

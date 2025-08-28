@@ -9,7 +9,7 @@ import com.telecom.Wezen.entity.Users;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
 
-	Optional<Users> findByMail(String mail);
+	Optional<Users> findByMailIgnoreCase(String mail);
 
 	Optional<Users> findById(Long id);
 

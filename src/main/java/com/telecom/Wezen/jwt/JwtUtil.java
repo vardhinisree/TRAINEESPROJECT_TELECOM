@@ -15,7 +15,7 @@ import io.jsonwebtoken.*;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "super-secret-key-change-this"; // ⚠️ keep safe!
+    private final String SECRET_KEY = "sCq0pVC8136RdoVcTT36O0ueicmFfkkOrlRhklAtkBk="; // ⚠️ keep safe!
 
     // Generate JWT with role and planId
     public String generateToken(String email, Role role, Long uuid) {

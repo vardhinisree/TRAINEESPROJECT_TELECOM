@@ -39,7 +39,7 @@ public class AuthenticationController {
     // -------- REGISTER ----------
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register request) {
-        if (userRepository.findByMail(request.mail()).isPresent()) {
+        if (userRepository.findByMailIgnoreCase(request.mail()).isPresent()) {
             return ResponseEntity.badRequest().body("Email already in use");
         }
 
@@ -68,7 +68,7 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(request.email(), request.password())
             );
 
-            Users user = userRepository.findByMail(request.email())
+            Users user = userRepository.findByMailIgnoreCase(request.email())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             // Generate JWT containing role + planId
